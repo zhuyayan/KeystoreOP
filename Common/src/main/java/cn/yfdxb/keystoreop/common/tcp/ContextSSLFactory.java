@@ -55,8 +55,8 @@ public class ContextSSLFactory {
             keyFac = TrustManagerFactory.getInstance("SunX509");
 //            is =new FileInputStream( (new ClassPathResource("main/java/conf/sChat.jks")).getFile());
             is =new FileInputStream((new File("C:\\Users\\zhu\\.keystore")));
-            ks = KeyStore.getInstance("JKS");
-            String keyStorePass = "sNetty";
+            ks = KeyStore.getInstance("PKCS12");
+            String keyStorePass = "Efxx12*";
             ks.load(is , keyStorePass.toCharArray());
             keyFac.init(ks);
             kms = keyFac.getTrustManagers();

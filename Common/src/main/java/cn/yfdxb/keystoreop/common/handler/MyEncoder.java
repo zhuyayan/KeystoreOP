@@ -13,7 +13,7 @@ public class MyEncoder extends MessageToByteEncoder<ByteBuffer> {
             return;
         if(msg.hasArray()){
             byte[] message = msg.array();
-            if(message == null || message.length <=0)
+            if(message == null || message.length <= 0)
                 return;
             out.writeBytes(message);
         }

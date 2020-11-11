@@ -13,9 +13,6 @@ import java.nio.ByteBuffer;
 public class NettySocketSSLHandler extends SimpleChannelInboundHandler<ByteBuffer> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ByteBuffer msg) throws Exception {
-        // Once session is secured, send a greeting and register the channel to the global channel
-        // list so the channel received the messages from others.
-
         ctx.pipeline().get(SslHandler.class).handshakeFuture().addListener(
                 new GenericFutureListener<Future<Channel>>() {
                     @Override
@@ -42,17 +39,18 @@ public class NettySocketSSLHandler extends SimpleChannelInboundHandler<ByteBuffe
     @Override
     public void handlerAdded(ChannelHandlerContext ctx)
             throws Exception {
-        System.out.println("服务端增加");
+        System.out.println("服务端增加: " + ctx.channel().remoteAddress());
     }
 
     @Override
     public void handlerRemoved(ChannelHandlerContext ctx){
-        System.out.println("移除:"+ctx.channel().remoteAddress());
+        System.out.println("移除: " + ctx.channel().remoteAddress());
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        System.out.println("Unexpected exception from downstream.");
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
+            throws Exception {
+        System.out.println("Unexpected exception from downstream: " + cause.getMessage());
         ctx.close();
     }
 
