@@ -37,15 +37,15 @@ public class TcpServer {
                     .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 1000 * 5 * 60)
                     .handler(new LoggingHandler(LogLevel.DEBUG))
                     .childHandler(new ChannelInitializer<SocketChannel>() {
-
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             ChannelPipeline pie = socketChannel.pipeline() ;
                             pie.addLast("decoder" , new MyDecoder());
                             pie.addLast("encoder" , new MyEncoder());
-                            pie.addLast("handler" , new NettySocketSSLHandler()) ;
+                            pie.addLast("handler" , new NettySocketSSLHandler());
                             SSLEngine engine = ContextSSLFactory.getSslContext().createSSLEngine();
                             engine.setUseClientMode(false);
+                            // 需要客户端认证
                             engine.setNeedClientAuth(true);
                             pie.addFirst("ssl", new SslHandler(engine));
                         }

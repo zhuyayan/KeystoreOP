@@ -11,7 +11,7 @@ public class TcpClient {
     private Channel channel;
     public TcpClient(){
         this.host = "172.16.1.142";
-        this.port = 18883;
+        this.port = 62345;
     }
 
     public void start(){
@@ -42,5 +42,18 @@ public class TcpClient {
         }catch (Exception ex){
             ex.printStackTrace();
         }
+    }
+
+    public void sendMessage(){
+        ChannelFuture future = this.channel.writeAndFlush("Hello World!\n");
+        try {
+            future.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void stop(){
+        this.channel.close().awaitUninterruptibly();
     }
 }
