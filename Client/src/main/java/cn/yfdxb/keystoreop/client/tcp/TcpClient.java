@@ -8,29 +8,32 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 public class TcpClient {
     private String host;
     private int port;
-    private Channel channel;
+    private Channel clientChannel;
+
+    private EventLoopGroup group = new NioEventLoopGroup();
+
+    private Bootstrap bootstrap = new Bootstrap();
     public TcpClient(){
         this.host = "172.16.1.142";
         this.port = 62345;
     }
 
-    public void start(){
+    public void start() {
         try {
             final EventLoopGroup group = new NioEventLoopGroup();
 
-            Bootstrap b = new Bootstrap();
-            b.group(group).channel(NioSocketChannel.class)
+            bootstrap.group(group).channel(NioSocketChannel.class)
                     .handler(new SSLChannelInitializer());
 
             //发起异步连接请求，绑定连接端口和host信息
-            final ChannelFuture future = b.connect(host, port).sync();
+            final ChannelFuture future = bootstrap.connect(host, port).sync();
 
             future.addListener(new ChannelFutureListener() {
                 @Override
                 public void operationComplete(ChannelFuture arg0) throws Exception {
                     if (future.isSuccess()) {
                         System.out.println("连接服务器成功");
-
+                        clientChannel = future.channel();
                     } else {
                         System.out.println("连接服务器失败");
                         future.cause().printStackTrace();
@@ -38,14 +41,20 @@ public class TcpClient {
                     }
                 }
             });
-            this.channel = future.channel();
+            future.channel().closeFuture().addListener(cf -> {
+
+            });
         }catch (Exception ex){
             ex.printStackTrace();
         }
     }
 
+    private void close(){
+        if(clientChannel != null)
+            clientChannel.close();
+    }
     public void sendMessage(){
-        ChannelFuture future = this.channel.writeAndFlush("Hello World!\n");
+        ChannelFuture future = clientChannel.writeAndFlush("Hello World!\n");
         try {
             future.await();
         } catch (InterruptedException e) {
@@ -54,6 +63,6 @@ public class TcpClient {
     }
 
     public void stop(){
-        this.channel.close().awaitUninterruptibly();
+        this.clientChannel.close().awaitUninterruptibly();
     }
 }

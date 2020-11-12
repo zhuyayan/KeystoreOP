@@ -3,7 +3,8 @@ package cn.yfdxb.keystoreop.server.tcp;
 import cn.yfdxb.keystoreop.common.handler.MyDecoder;
 import cn.yfdxb.keystoreop.common.handler.MyEncoder;
 import cn.yfdxb.keystoreop.common.handler.NettySocketSSLHandler;
-import cn.yfdxb.keystoreop.common.tcp.ContextSSLFactory;
+import cn.yfdxb.keystoreop.common.sslctx.ServerSslContextFactory;
+import cn.yfdxb.keystoreop.common.sslctx.SslContextFactory;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -43,7 +44,8 @@ public class TcpServer {
                             pie.addLast("decoder" , new MyDecoder());
                             pie.addLast("encoder" , new MyEncoder());
                             pie.addLast("handler" , new NettySocketSSLHandler());
-                            SSLEngine engine = ContextSSLFactory.getSslContext().createSSLEngine();
+                            SslContextFactory factory = new ServerSslContextFactory();
+                            SSLEngine engine = factory.build().createSSLEngine();
                             engine.setUseClientMode(false);
                             // 需要客户端认证
                             engine.setNeedClientAuth(true);
