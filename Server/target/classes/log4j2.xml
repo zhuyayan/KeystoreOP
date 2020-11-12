@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- status="OFF"，可以去掉，它的含义为是否记录log4j2本身的event信息，默认是OFF -->
+<Configuration status="OFF" schema="Log4J-V2.2.xsd">
+    <!-- 定义下面的引用名 -->
+    <Properties>
+        <Property name="base_path">logs</Property>
+        <Property name="log_pattern">%highlight{%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n}</Property>
+        <Property name="common-msg">${base_path}/common.log</Property>
+        <Property name="log-file-msg">${base_path}/log-file.log</Property>
+        <Property name="rolling_file_common-msg">${base_path}/common%d{yyyy-MM-dd}.log</Property>
+        <Property name="error-msg">${base_path}/error.log</Property>
+        <Property name="rolling_file_error-msg">${base_path}/error%d{yyyy-MM-dd}.log</Property>
+    </Properties>
+    <!--先定义所有的appender -->
+    <Appenders>
+        <!-- 输出控制台的配置 -->
+        <Console name="console" target="SYSTEM_OUT">
+            <!-- 控制台只输出level及以上级别的信息onMatch，其他的直接拒绝onMismatch) -->
+            <!--            <Filters>-->
+            <!--                <ThresholdFilter level="trace" onMatch="ACCEPT" />-->
+            <!--            </Filters>-->
+            <!-- 输出日志的格式 -->
+            <PatternLayout pattern="${log_pattern}" />
+        </Console>
+
+        <!-- 打印出所有的信息，每次大小超过size，则这size大小的日志会自动存入按年份-月份建立的文件夹下面并进行压缩，作为存档 -->
+        <!-- 按月生成归档日志，可以使用 filePattern="logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.log" -->
+        <RollingFile name="rolling_file_common-msg"
+                     filename="${common-msg}" filePattern="${rolling_file_common-msg}" append="true">
+            <!--            <Filters>-->
+            <!--                <ThresholdFilter level="error" onMatch="DENY" />-->
+            <!--                <ThresholdFilter level="info" onMatch="ACCEPT" />-->
+            <!--                <ThresholdFilter level="debug" onMatch="ACCEPT" />-->
+            <!--            </Filters>-->
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+            </Policies>
+        </RollingFile>
+
+        <RollingFile name="rolling_file_error-msg"
+                     filename="${error-msg}" filePattern="${rolling_file_error-msg}"
+                     append="true">
+            <!--            <Filters>-->
+            <!--                <ThresholdFilter level="error" onMatch="ACCEPT" />-->
+            <!--            </Filters>-->
+            <PatternLayout>
+                <Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %class{36} %L %M - %msg%xEx%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+            </Policies>
+        </RollingFile>
+
+        <File name="log_file" filename="${log-file-msg}" append="true">
+            <PatternLayout pattern="${log_pattern}" />
+        </File>
+
+        <!-- 输出日志到Kafka -->
+        <!--        <Kafka name="kafka" topic="log-test">-->
+        <!--            <ThresholdFilter level="info" onMatch="ACCEPT" />-->
+        <!--            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss,SSS}:%4p %t (%F:%L) - %m%n" />-->
+        <!--            <Property name="bootstrap.servers">106.14.159.238:9092</Property>-->
+        <!--        </Kafka>-->
+    </Appenders>
+
+    <!--然后定义Logger，只有定义了Logger并引入的appender，appender才会生效 -->
+    <Loggers>
+        <!--        <AsyncLogger name="cn.com.eflytech.stucard.App" level="trace" additivity="false"  includeLocation="true">-->
+        <!--            <AppenderRef ref="console" />-->
+        <!--            <AppenderRef ref="rolling_file_common-msg"  />-->
+        <!--            <AppenderRef ref="rolling_file_error-msg" />-->
+        <!--            <AppenderRef ref="Kafka" />-->
+        <!--        </AsyncLogger>-->
+        <!--        <AsyncLogger name="anxiaobei.log" level="info" includeLocation="true">-->
+        <!--            <AppenderRef ref="kafka"/>-->
+        <!--        </AsyncLogger>-->
+        <Root level="info">
+            <AppenderRef ref="console" level="info" />
+            <!--            <AppenderRef ref="rolling_file_common-msg" />-->
+            <!--            <AppenderRef ref="rolling_file_error-msg" />-->
+            <AppenderRef ref="log_file" level="info" />
+        </Root>
+    </Loggers>
+</Configuration>

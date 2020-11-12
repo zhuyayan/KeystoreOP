@@ -19,17 +19,18 @@ import io.netty.handler.ssl.SslHandler;
 import javax.net.ssl.SSLEngine;
 
 public class TcpServer {
-    private static SslHandler sslHandler = null ;
+    private static SslHandler sslHandler = null;
 
-    private EventLoopGroup bossGroup = null ;
+    private EventLoopGroup bossGroup = null;
 
-    private EventLoopGroup workerGroup = null ;
+    private EventLoopGroup workerGroup = null;
     public void run(){
-        bossGroup = new NioEventLoopGroup() ;
-        workerGroup = new NioEventLoopGroup() ;
+        bossGroup = new NioEventLoopGroup();
+        workerGroup = new NioEventLoopGroup();
 
-        try{
-            ServerBootstrap serverStrap = new ServerBootstrap() ;
+        try
+        {
+            ServerBootstrap serverStrap = new ServerBootstrap();
             serverStrap.group(bossGroup , workerGroup)
                     .channel(NioServerSocketChannel.class)
                     .option(ChannelOption.SO_BACKLOG, 128)
@@ -39,20 +40,20 @@ public class TcpServer {
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
-                            ChannelPipeline pie = socketChannel.pipeline() ;
+                            ChannelPipeline pie = socketChannel.pipeline();
                             pie.addLast("decoder" , new MyDecoder());
                             pie.addLast("encoder" , new MyEncoder());
                             pie.addLast("handler" , new NettySocketSSLHandler());
                             SSLEngine engine = ContextSSLFactory.getSslContext().createSSLEngine();
                             engine.setUseClientMode(false);
                             // 需要客户端认证
-                            engine.setNeedClientAuth(true);
-                            pie.addFirst("ssl", new SslHandler(engine));
+                            engine.setNeedClientAuth(false);
+                            //pie.addFirst("ssl", new SslHandler(engine));
                         }
                     });
             serverStrap.bind(62345).sync();
             System.out.println("服务已开启");
-        }catch(Exception e){
+        } catch(Exception e) {
             e.printStackTrace();
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();

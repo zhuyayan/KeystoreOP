@@ -30,7 +30,6 @@ public class TcpClient {
                 public void operationComplete(ChannelFuture arg0) throws Exception {
                     if (future.isSuccess()) {
                         System.out.println("连接服务器成功");
-
                     } else {
                         System.out.println("连接服务器失败");
                         future.cause().printStackTrace();
