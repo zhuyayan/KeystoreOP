@@ -6,13 +6,17 @@ public class Client {
     public static void main(String[] args) {
         TcpClient client = new TcpClient();
         client.start();
+
+        while(client.clientStat == false);
+        System.out.println("sending ...");
+        for(int index = 0; index < 500; index++) {
+            client.sendMessage();
+        }
         try {
             Thread.sleep(5000);
-            client.sendMessage();
-            Thread.sleep(5000);
-            client.stop();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        client.stop();
     }
 }

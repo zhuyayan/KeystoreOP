@@ -1,6 +1,5 @@
 package cn.yfdxb.keystoreop.common;
 
-import cn.yfdxb.keystoreop.common.tcp.TcpClient;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.BasicConstraints;
@@ -24,8 +23,10 @@ import java.util.Date;
 public class App {
     public static final String KEY_ALGORITHM = "RSA";
     public static void main(String[] args) throws CertificateException, UnrecoverableKeyException, NoSuchAlgorithmException, IOException, KeyStoreException, NoSuchProviderException {
-        TcpClient client = new TcpClient();
-        client.start();
+
+        //        TcpClient client = new TcpClient();
+//        client.start();
+
         //        exportCertificate();
 //        addCertificateToKeystore("001", "001", "123456", "75723958305834905829283490538495340");
     }

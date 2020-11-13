@@ -31,7 +31,7 @@ public class ClientSslContextFactory extends AbstractSslContextFactory {
         try {
             // 获得KeyManagerFactory对象. 初始化位默认算法
             keyFac = KeyManagerFactory.getInstance("SunX509");
-            File file = new File("/Users/zhuyayan/client.p12");
+            File file = new File("/Users/zhuyayan/test.truststore");
             is =new FileInputStream(file);
             ks = KeyStore.getInstance("PKCS12");
             String keyStorePass = "Efxx12*";
@@ -62,7 +62,7 @@ public class ClientSslContextFactory extends AbstractSslContextFactory {
         try {
             // 获得KeyManagerFactory对象. 初始化位默认算法
             keyFac = TrustManagerFactory.getInstance("SunX509");
-            File file = new File("/Users/zhuyayan/client.p12");
+            File file = new File("/Users/zhuyayan/test.truststore");
             is =new FileInputStream(file);
             ks = KeyStore.getInstance("PKCS12") ;
             String keyStorePass = "Efxx12*";
