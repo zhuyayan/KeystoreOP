@@ -11,7 +11,7 @@ public class Client {
 
         while(client.clientStat == false);
         log.info("sending ...");
-        for(int index = 0; index < 500; index++) {
+        for(int index = 0; index < 5000; index++) {
             client.sendMessage();
         }
         try {
