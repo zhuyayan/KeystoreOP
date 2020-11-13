@@ -4,7 +4,7 @@ import cn.yfdxb.keystoreop.common.coder.MessagePacketDecoder;
 import cn.yfdxb.keystoreop.common.coder.MessagePacketEncoder;
 import cn.yfdxb.keystoreop.common.handler.NettySocketSSLHandler;
 import cn.yfdxb.keystoreop.common.handler.TCPServerHandler;
-import cn.yfdxb.keystoreop.common.sslctx.ServerSslContextFactory;
+import cn.yfdxb.keystoreop.common.sslctx.ClientModeServerSslContextFactory;
 import cn.yfdxb.keystoreop.common.sslctx.SslContextFactory;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -15,14 +15,14 @@ import io.netty.handler.timeout.IdleStateHandler;
 import javax.net.ssl.SSLEngine;
 import java.util.concurrent.TimeUnit;
 
-public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> {
+public class ClientModeServerChannelInitializer extends ChannelInitializer<SocketChannel> {
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
         ChannelPipeline pipeline = ch.pipeline();
         pipeline.addLast("idleStateHandler",
                 new IdleStateHandler(15, 0, 0, TimeUnit.MINUTES));
 
-        SslContextFactory factory = new ServerSslContextFactory();
+        SslContextFactory factory = new ClientModeServerSslContextFactory();
         SSLEngine engine = factory.build().createSSLEngine();
         engine.setUseClientMode(false);
 

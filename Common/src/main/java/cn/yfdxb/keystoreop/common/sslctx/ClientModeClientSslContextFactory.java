@@ -8,9 +8,22 @@ import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
 
-public class ServerSslContextFactory extends AbstractSslContextFactory {
-    private static SSLContext context = null;
-    private KeyManager[] getServerKeyManagers(){
+public class ClientModeClientSslContextFactory extends AbstractSslContextFactory {
+    @Override
+    public SSLContext build() {
+        if(context != null)
+            return context;
+        try {
+            context = SSLContext.getInstance("TLSv1.2");
+            context.init(getClientKeyManagers(), getClientTrustManagers(), null);
+            return context;
+        } catch (NoSuchAlgorithmException | KeyManagementException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private KeyManager[] getClientKeyManagers(){
         FileInputStream is = null;
         KeyStore ks = null;
         KeyManagerFactory keyFac = null;
@@ -18,7 +31,7 @@ public class ServerSslContextFactory extends AbstractSslContextFactory {
         try {
             // 获得KeyManagerFactory对象. 初始化位默认算法
             keyFac = KeyManagerFactory.getInstance("SunX509");
-            File file = new File("C:\\Users\\zhu\\.keystore");
+            File file = new File("/Users/zhuyayan/test.truststore");
             is =new FileInputStream(file);
             ks = KeyStore.getInstance("PKCS12");
             String keyStorePass = "Efxx12*";
@@ -36,24 +49,26 @@ public class ServerSslContextFactory extends AbstractSslContextFactory {
                 }
             }
         }
-        return kms;
+        /* No key Manager */
+        return null;
+        //return kms;
     }
 
-    private TrustManager[] getServerTrustManager(){
+    private TrustManager[] getClientTrustManagers(){
         FileInputStream is = null;
         KeyStore ks = null;
         TrustManagerFactory keyFac = null;
-        TrustManager[] kms = null;
+        TrustManager[] trustManagers = null;
         try {
             // 获得KeyManagerFactory对象. 初始化位默认算法
             keyFac = TrustManagerFactory.getInstance("SunX509");
-            File file = new File("C:\\Users\\zhu\\.keystore");
+            File file = new File("/Users/zhuyayan/test.truststore");
             is =new FileInputStream(file);
             ks = KeyStore.getInstance("PKCS12") ;
             String keyStorePass = "Efxx12*";
             ks.load(is , keyStorePass.toCharArray());
             keyFac.init(ks);
-            kms = keyFac.getTrustManagers();
+            trustManagers = keyFac.getTrustManagers();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -66,20 +81,6 @@ public class ServerSslContextFactory extends AbstractSslContextFactory {
                 }
             }
         }
-        return kms;
-    }
-
-    @Override
-    public SSLContext build() {
-        if(context != null)
-            return context;
-        try {
-            context = SSLContext.getInstance("TLSv1.2");
-            context.init(getServerKeyManagers(), getServerTrustManager(), null);
-            return context;
-        } catch (NoSuchAlgorithmException | KeyManagementException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return trustManagers;
     }
 }

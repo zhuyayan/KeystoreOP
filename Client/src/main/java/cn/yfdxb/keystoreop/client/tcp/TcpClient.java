@@ -1,6 +1,7 @@
 package cn.yfdxb.keystoreop.client.tcp;
 
-import cn.yfdxb.keystoreop.common.initializer.ClientChannelInitializer;
+import cn.yfdxb.keystoreop.common.initializer.ClientModeClientChannelInitializer;
+import cn.yfdxb.keystoreop.common.initializer.ServerModeClientChannelInitializer;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
@@ -17,7 +18,8 @@ public class TcpClient {
     private Bootstrap bootstrap = new Bootstrap();
     public boolean clientStat = false;
     public TcpClient(){
-        this.host = "172.16.1.142";
+        this.host = "192.168.1.102";
+//        this.host = "172.16.1.142";
         this.port = 62345;
     }
 
@@ -27,7 +29,7 @@ public class TcpClient {
                     .channel(NioSocketChannel.class)
                     .option(ChannelOption.SO_KEEPALIVE, true)
 //                    .handler(new SSLChannelInitializer());
-            .handler(new ClientChannelInitializer());
+            .handler(new ServerModeClientChannelInitializer());
             //发起异步连接请求，绑定连接端口和host信息
             ChannelFuture futureChannel = bootstrap.connect(host, port).sync();
             futureChannel.addListener(new ChannelFutureListener() {
