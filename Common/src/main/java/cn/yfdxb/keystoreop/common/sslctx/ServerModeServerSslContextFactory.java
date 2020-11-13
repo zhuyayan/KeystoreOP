@@ -35,7 +35,8 @@ public class ServerModeServerSslContextFactory extends AbstractSslContextFactory
         TrustManager trustManager[] = null;
         try {
             trustManagerFactory = TrustManagerFactory.getInstance("SunX509");
-            trustStoreFileInputStream = new FileInputStream("/Users/zhuyayan/client.truststore");
+            trustStoreFileInputStream = new FileInputStream("C:\\Users\\zhuyayan\\client_truststore.p12");
+            keyStore = KeyStore.getInstance("PKCS12");
             String trustStorePassword = "Efxx12*";
             keyStore.load(trustStoreFileInputStream, trustStorePassword.toCharArray());
             trustManagerFactory.init(keyStore);

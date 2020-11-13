@@ -16,6 +16,7 @@ public class ServerModeServerChannelInitializer extends ChannelInitializer<Socke
         SslContextFactory factory = new ServerModeServerSslContextFactory();
         SSLEngine engine = factory.build().createSSLEngine();
         engine.setUseClientMode(true);
+        engine.setNeedClientAuth(true);
         pipeline.addFirst("server_mode_server_ssl", new SslHandler(engine));
     }
 }
